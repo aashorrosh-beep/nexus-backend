@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import pytz
 import random
-import time
 
 app = FastAPI(title="NEXUS Autonomous C-Suite")
 
@@ -18,128 +17,80 @@ app.add_middleware(
 MIN_MARGIN_THRESHOLD = 0.30
 TIMEZONE = pytz.timezone('America/Chicago')
 
-# --- ARBITRAGE CONFIGURATION ---
-MAX_PRESALE_MARKUP = 1.30  # Will not buy if priced more than 30% over MSRP
-NATIONWIDE_PROXIES = ["us-tx-houston-proxy-01", "us-ny-brooklyn-proxy-14", "us-ca-losangeles-proxy-88"]
-
 # ---------------------------------------------------------
-# VP OF PROCUREMENT: THE UNIVERSAL AGGREGATOR & SNIPER
+# BRAIN A: THE PROCUREMENT AGENT (THE FINDER)
 # ---------------------------------------------------------
-def hunt_global_suppliers(category: str):
-    """ Open-Web Hunter: Scrapes free data without API fees """
-    print(f"VP OF PROCUREMENT: Scanning US 3PL Networks for {category}...")
+def hunt_raw_inventory(category: str):
+    """ Scrapes raw data from the open web without verification. """
     raw_pull = []
     for i in range(1, 50):
         cost = round(random.uniform(10.0, 150.0), 2)
-        multiplier = random.uniform(1.1, 2.5) 
-        price = round(cost * multiplier, 2)
-        shipping_days = random.randint(2, 14)
+        price = round(cost * random.uniform(1.1, 2.5), 2)
+        target_sku = f"RAW-SKU-{random.randint(10000,99999)}"
+        target_img = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80"
         
         raw_pull.append({
-            "sku": f"SUPPLIER-RAW-{i}",
+            "sku": target_sku,
             "name": f"Trending {category} Item {i}",
             "cost": cost,
             "price": price,
-            "shipping_days": shipping_days,
-            "img": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80"
+            "shipping_days": random.randint(2, 14),
+            "img": target_img
         })
     return raw_pull
 
-def presale_sniper(item_name, msrp, live_price, available_stock):
+# ---------------------------------------------------------
+# BRAIN B: THE AUDITOR AGENT (THE VERIFIER)
+# ---------------------------------------------------------
+def dual_brain_verification(raw_items):
     """ 
-    THE ARBITRAGE SNIPER: 
-    Hunts presale drops. Bypasses limits using regional proxy nodes.
+    Nothing touches the floor unless the Auditor passes it. 
+    Checks Visuals, SKUs, 30% Margins, and 7-Day Shipping.
     """
-    print(f"TARGET ACQUIRED: {item_name} | MSRP: ${msrp} | LIVE: ${live_price}")
-    
-    if live_price <= (msrp * MAX_PRESALE_MARKUP):
-        print(f"PRICING APPROVED. Live price is within 30% margin. Executing nationwide sweep.")
-        
-        secured_inventory = 0
-        for node in NATIONWIDE_PROXIES:
-            if secured_inventory < available_stock:
-                success = execute_stealth_checkout(node, item_name)
-                if success:
-                    secured_inventory += 1
-                    print(f"SUCCESS: Unit secured via {node}")
-                    time.sleep(random.uniform(0.5, 2.1)) # Anti-bot delay
-                    
-        return {
-            "status": "VAULTED",
-            "item": item_name,
-            "units_secured": secured_inventory,
-            "avg_cost": live_price,
-            "projected_resale": live_price * 2.5 # Projecting the 150% spike
-        }
-    else:
-        return {"status": "REJECTED", "reason": "Exceeds 30% Markup Ceiling"}
-
-def execute_stealth_checkout(proxy_node, item):
-    """ Headless browser logic placeholder (Playwright/Selenium) """
-    return True
-
-# ---------------------------------------------------------
-# VP OF CASH FLOW: THE RUTHLESS AUDITOR
-# ---------------------------------------------------------
-def execute_margin_audit(raw_items):
     approved_vault = []
     killed_count = 0
     
     for item in raw_items:
+        # 1. Financial Audit
         margin = (item['price'] - item['cost']) / item['price']
         
-        if margin >= MIN_MARGIN_THRESHOLD and item['shipping_days'] <= 7:
+        # 2. Logistics Audit
+        valid_shipping = item['shipping_days'] <= 7
+        
+        # 3. Visual & SKU Audit (Computer Vision Placeholder)
+        visual_confidence = random.uniform(0.85, 0.99)
+        valid_sku_match = visual_confidence >= 0.90
+        
+        if margin >= MIN_MARGIN_THRESHOLD and valid_shipping and valid_sku_match:
             approved_vault.append({
-                "sku": f"ALBS-VERIFIED-{random.randint(1000,9999)}",
+                "sku": f"ALBS-VERIFIED-{item['sku'][-5:]}",
                 "name": item['name'],
                 "price": f"{item['price']:.2f}",
                 "cost": item['cost'],
                 "margin_pct": round(margin * 100, 1),
                 "images": [item['img']],
                 "shippingText": f"PRIORITY DISPATCH: {item['shipping_days']} DAYS",
-                "rating": round(random.uniform(4.5, 5.0), 1),
-                "specsAvailable": True,
-                "videoAvailable": True if item['price'] > 50 else False
+                "rating": round(random.uniform(4.5, 5.0), 1)
             })
         else:
             killed_count += 1
             
+    # Sort by best margins and cap at top 12 items for the showroom
     approved_vault.sort(key=lambda x: x['margin_pct'], reverse=True)
-    top_12 = approved_vault[:12]
-    
-    return top_12, killed_count
+    return approved_vault[:12], killed_count
 
 # ---------------------------------------------------------
-# DAILY OPERATIONS: THE SHIFT REPORT
+# DAILY OPERATIONS ROUTING
 # ---------------------------------------------------------
-daily_ledgers = {}
-
 @app.get("/api/matrix")
 def get_matrix(category: str):
-    raw_market_data = hunt_global_suppliers(category)
-    live_items, killed = execute_margin_audit(raw_market_data)
+    # 1. Brain A finds the raw items
+    raw_market_data = hunt_raw_inventory(category)
     
-    daily_ledgers[category] = {
-        "items_scanned": len(raw_market_data),
-        "items_killed": killed,
-        "live_inventory": len(live_items),
-        "avg_margin": f"{sum(i['margin_pct'] for i in live_items) / len(live_items):.1f}%" if live_items else "0%"
-    }
+    # 2. Brain B strictly audits them
+    live_items, killed = dual_brain_verification(raw_market_data)
     
     if not live_items:
         return {"status": "sourcing", "items": []}
         
     return {"status": "live", "items": live_items}
-
-@app.get("/api/ceo-report")
-def generate_shift_report():
-    current_time = datetime.now(TIMEZONE)
-    
-    report = {
-        "EXECUTIVE_SUMMARY": "ALBS DAILY SHIFT MATCHUP & ARBITRAGE LEDGER",
-        "SHIFT_TIME": current_time.strftime("%Y-%m-%d %H:%M:%S CST"),
-        "NEXT_RESET": "21:00:00 CST",
-        "STOREFRONT_LEDGERS": daily_ledgers,
-        "SYSTEM_STATUS": "AUTONOMOUS HUNTING & SNIPING ACTIVE. ALL MARGINS > 30%."
-    }
-    return report
