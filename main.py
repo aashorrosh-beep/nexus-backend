@@ -60,3 +60,10 @@ async def get_category_drop(category: str):
         "category": category.upper(),
         "items": MASTER_INVENTORY[category_key]
     }
+@app.get("/")
+def read_root():
+    return {"status": "ALBS Motor is Online"}
+
+@app.get("/rooms")
+def get_rooms():
+    return ROOM_ASSETS
