@@ -21,17 +21,24 @@ TIMEZONE = pytz.timezone('America/Chicago')
 # BRAIN A: THE PROCUREMENT AGENT (THE FINDER)
 # ---------------------------------------------------------
 def hunt_raw_inventory(category: str):
-    """ Scrapes raw data from the open web without verification. """
+    """ Scrapes raw data and autonomously generates unique visuals via AI network. """
     raw_pull = []
+    
+    # Clean the category string to act as a strict prompt for the visual engine
+    visual_prompt = f"professional product photography of {category} high quality trending item, studio lighting"
+    url_safe_prompt = visual_prompt.replace(" ", "%20")
+    
     for i in range(1, 50):
         cost = round(random.uniform(10.0, 150.0), 2)
         price = round(cost * random.uniform(1.1, 2.5), 2)
         target_sku = f"RAW-SKU-{random.randint(10000,99999)}"
-        target_img = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80"
+        
+        # The engine constructs a unique AI image URL for every single item.
+        target_img = f"https://image.pollinations.ai/prompt/{url_safe_prompt}?nologo=true&seed={i}&width=800&height=800"
         
         raw_pull.append({
             "sku": target_sku,
-            "name": f"Trending {category} Item {i}",
+            "name": f"Trending {category.upper()} Item {i}",
             "cost": cost,
             "price": price,
             "shipping_days": random.randint(2, 14),
