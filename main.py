@@ -49,7 +49,7 @@ class CheckoutRequest(BaseModel):
     image: str
 
 # ---------------------------------------------------------
-# THE ELITE SHOWCASE VAULT
+# THE ELITE SHOWCASE VAULT (21 MATRIX STOREFRONTS)
 # ---------------------------------------------------------
 SHOWCASE_VAULT = {
     "trading cards vault": [
@@ -66,8 +66,7 @@ SHOWCASE_VAULT = {
             "cost": 450.00,
             "target_price": 600.00,
             "mfg": "Panini",
-            "base_img": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=800",
-            "extra_imgs": []
+            "base_img": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=800"
         }
     ],
     "tech & mobile gear": [
@@ -76,8 +75,39 @@ SHOWCASE_VAULT = {
             "cost": 759.00,
             "target_price": 959.00,
             "mfg": "DJI",
-            "base_img": "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80&w=800",
-            "extra_imgs": []
+            "base_img": "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&q=80&w=800"
+        }
+    ],
+    "high-performance auto": [],
+    "golf & athletic apparel": [],
+    "home renovation & fixtures": [],
+    "luxury & humidor accessories": [],
+    "fine arts & creative design": [],
+    "health & wellness tech": [],
+    "beauty & personal care": [],
+    "eco-friendly living": [],
+    "smart pet tech": [],
+    "home office ergonomics": [],
+    "outdoor & survival gear": [],
+    "gourmet food & culinary": [],
+    "men's grooming": [],
+    "travel tech & luggage": [],
+    "fitness & recovery": [],
+    "gaming & esports": [],
+    "early education tech": [],
+    "smart kitchen gadgets": [],
+    # -----------------------------------------------------
+    # ROOM 21: THE WILDCARD ACQUISITIONS
+    # -----------------------------------------------------
+    "room 21: pre-release acquisitions": [
+        {
+            "raw_name": "Sealed Pokémon TCG Elite Trainer Box (Pre-Release)",
+            "base_msrp": 50.00,
+            "cost": 50.00, # Dynamically overwritten by the Hunter Agent
+            "target_price": 140.00,
+            "mfg": "The Pokémon Company",
+            "is_prerelease": True,
+            "base_img": "https://images.unsplash.com/photo-1613771404721-1f92d799e49f?auto=format&fit=crop&q=80&w=800"
         }
     ]
 }
@@ -85,22 +115,27 @@ SHOWCASE_VAULT = {
 # ---------------------------------------------------------
 # INDUSTRY-BENCHMARK C-SUITE AGENTS
 # ---------------------------------------------------------
+async def vp_acquisitions(item: dict):
+    # Room 21 Hunter Logic: Secures pre-releases at 20% over MSRP
+    await asyncio.sleep(0.1)
+    if item.get('is_prerelease'):
+        premium_cost = item['base_msrp'] * 1.20
+        item['cost'] = premium_cost
+        item['raw_name'] = f"💎 SECURED ALLOCATION: {item['raw_name']}"
+    return item
+
 async def vp_marketing(item: dict):
-    # The Gymshark Seeding Model
     await asyncio.sleep(0.1)
     item['name'] = f"🔥 TRENDING: {item['raw_name'].upper()}"
     item['marketing_copy'] = f"Verified authentic {item['mfg']} asset. High market demand."
     return item
 
 async def vp_logistics(item: dict):
-    # The ShipBob Velocity Model
     await asyncio.sleep(0.1)
-    # Fast 2-Day Dispatch
     item['shippingText'] = f"PRIORITY SECURE DISPATCH: {random.randint(1, 2)} DAYS"
     return item
 
 async def vp_media_security(item: dict):
-    # The Sotheby's Presentation Standard
     await asyncio.sleep(0.1)
     item['images'] = [item['base_img']] + item.get('extra_imgs', [])
     item['specs'] = ProductSpecs(
@@ -118,7 +153,6 @@ async def vp_influencer_relations(item: dict):
     return item
 
 async def vp_auditor(item: dict):
-    # The StockX Dynamic Margin Model
     margin = (item['target_price'] - item['cost']) / item['target_price']
     if margin >= 0.10: 
         return NexusProduct(
@@ -142,14 +176,21 @@ async def vp_auditor(item: dict):
 @app.get("/api/matrix")
 async def get_matrix(category: str):
     category_key = category.lower()
-    raw_items = SHOWCASE_VAULT.get(category_key, [])
+    
+    if category_key == "all":
+        raw_items = []
+        for items in SHOWCASE_VAULT.values():
+            raw_items.extend(items)
+    else:
+        raw_items = SHOWCASE_VAULT.get(category_key, [])
     
     if not raw_items:
         return {"status": "sourcing", "items": []}
 
     live_floor = []
     for raw in raw_items:
-        processed = await vp_marketing(raw.copy())
+        processed = await vp_acquisitions(raw.copy())
+        processed = await vp_marketing(processed)
         processed = await vp_logistics(processed)
         processed = await vp_media_security(processed)
         processed = await vp_influencer_relations(processed)
@@ -162,7 +203,6 @@ async def get_matrix(category: str):
 
 @app.post("/api/create-checkout-session")
 async def create_checkout_session(request: CheckoutRequest):
-    """ The Payment Gateway via Stripe API """
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -173,13 +213,13 @@ async def create_checkout_session(request: CheckoutRequest):
                         'name': request.name,
                         'images': [request.image],
                     },
-                    'unit_amount': int(request.price * 100), # Stripe strictly requires cents
+                    'unit_amount': int(request.price * 100),
                 },
                 'quantity': 1,
             }],
             mode='payment',
-            success_url="http://137.184.156.158:3000/success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://137.184.156.158:3000/cart",
+            success_url="http://167.172.154.139:3000/success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url="http://167.172.154.139:3000/",
         )
         return {"url": session.url}
     except Exception as e:
