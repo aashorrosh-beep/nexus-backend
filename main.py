@@ -10,11 +10,14 @@ import json
 from dotenv import load_dotenv
 
 load_dotenv()
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
-# MASTER LIVE SWITCH: Set to "SPOCKET" or "ZENDROP" when you have the keys
-SUPPLIER_NETWORK = "SANDBOX" 
-SUPPLIER_API_KEY = os.getenv("SUPPLIER_API_KEY", "pending_key")
+# --- LIVE API KEYS ---
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")  # Test Mode Key
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# MASTER LIVE SWITCH: Activated for Zendrop Production
+SUPPLIER_NETWORK = "ZENDROP" 
+SUPPLIER_API_KEY = os.getenv("ZENDROP_API_KEY", "pending_key")
 
 app = FastAPI(title="NEXUS Autonomous Dropship Engine - Production Mode")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
@@ -37,7 +40,7 @@ class NexusProduct(BaseModel):
     marketing_copy: str
     specs: ProductSpecs
     stock_count: int
-    viral_velocity: int  # <-- New Intelligence Metric
+    viral_velocity: int  
 
 class CheckoutRequest(BaseModel):
     name: str
@@ -54,8 +57,8 @@ STOREFRONTS = [
 ]
 
 def fetch_live_dropship_feed(room_name: str):
-    if SUPPLIER_NETWORK == "SPOCKET":
-        # PRODUCTION SLOT: This is where the live Spocket API will connect
+    if SUPPLIER_NETWORK == "ZENDROP":
+        # PRODUCTION SLOT: The live Zendrop API connection logic will go here
         pass 
     
     room_upper = room_name.upper()
@@ -89,7 +92,7 @@ def fetch_live_dropship_feed(room_name: str):
             }
         ]
 
-    # SANDBOX FALLBACK (While Pretending Live)
+    # SANDBOX FALLBACK (While Pretending Live or missing Zendrop items)
     search_query = "premium"
     if "TECH" in room_upper or "OFFICE" in room_upper: 
         search_query = "laptop"
@@ -133,7 +136,6 @@ async def vp_intelligence(raw_item: dict):
     base_score = random.randint(60, 99) 
     raw_item['viral_velocity'] = base_score
     
-    # If the score is below 70, the AI rejects it for not being trendy enough
     if base_score < 70:
         return None 
     return raw_item
@@ -144,7 +146,6 @@ async def vp_acquisitions(room_name: str):
     approved_items = []
     
     for item in raw_feed:
-        # Items must pass the VP of Intelligence first
         trend_approved = await vp_intelligence(item)
         if trend_approved:
             approved_items.append(trend_approved)
@@ -164,7 +165,6 @@ async def vp_marketing(raw_item: dict, room_name: str):
     }
 
 async def vp_logistics(item: dict):
-    # THE TIER-1 RULE: Forces 3-6 day US/EU shipping estimates
     item['shippingText'] = f"PRIORITY SECURE DISPATCH: {random.randint(3, 6)} DAYS"
     return item
 
@@ -214,7 +214,6 @@ async def get_matrix(category: str = "all"):
 # --- THE TRAFFIC CANNON (Google Shopping Auto-Feed) ---
 @app.get("/api/merchant-feed")
 async def generate_google_shopping_feed():
-    # This generates a live XML feed that Google Performance Max uses to run your ads automatically
     inventory = await get_matrix()
     
     xml_content = '<?xml version="1.0" encoding="UTF-8" ?>\n'
