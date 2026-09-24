@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import asyncio
 import random
+import urllib.request
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,13 +32,13 @@ class NexusProduct(BaseModel):
     rating: float
     marketing_copy: str
     specs: ProductSpecs
+    stock_count: int  # <-- Added Scarcity tracking
 
 class CheckoutRequest(BaseModel):
     name: str
     price: float
     image: str
 
-# --- THE 21 STOREFRONTS ---
 STOREFRONTS = [
     "Trading Cards Vault", "Tech & Mobile Gear", "High-Performance Auto", "Golf & Athletic Apparel",
     "Home Renovation & Fixtures", "Luxury & Humidor Accessories", "Fine Arts & Creative Design",
@@ -46,51 +48,80 @@ STOREFRONTS = [
     "Smart Kitchen Gadgets", "Room 21: Pre-Release Acquisitions"
 ]
 
-# --- SIMULATED LIVE DROPSHIP API FEED ---
 def fetch_live_dropship_feed(room_name: str):
+    search_query = "premium"
+    if "TECH" in room_name: search_query = "laptop"
+    elif "AUTO" in room_name: search_query = "vehicle"
+    elif "BEAUTY" in room_name: search_query = "beauty"
+    elif "GROOMING" in room_name: search_query = "fragrance"
+    elif "HOME" in room_name: search_query = "furniture"
+    elif "TRAVEL" in room_name: search_query = "bag"
+    elif "PET" in room_name: search_query = "pet"
+    elif "FITNESS" in room_name or "GOLF" in room_name: search_query = "sports"
+    elif "FOOD" in room_name: search_query = "groceries"
+    elif "LUXURY" in room_name: search_query = "watch"
+    elif "KITCHEN" in room_name: search_query = "kitchen"
+    
+    try:
+        url = f"https://dummyjson.com/products/search?q={search_query}&limit=10"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode())
+            products = data.get("products", [])
+    except Exception as e:
+        products = []
+
     items = []
-    for i in range(1, 11):
-        raw_cost = round(random.uniform(15.0, 150.0), 2)
-        items.append({
-            "raw_title": f"2026 Trending {room_name} Item {i} High Quality Fast Ship Wholesale",
-            "wholesale_cost": raw_cost,
-            "supplier_origin": random.choice(["US Warehouse", "Global Hub"]),
-            "base_img": f"https://picsum.photos/seed/{room_name.replace(' ', '')}{i}/800/800"
-        })
+    for i in range(10):
+        if i < len(products):
+            p = products[i]
+            items.append({
+                "raw_title": p.get('title', f"Premium Asset"),
+                "wholesale_cost": float(p.get('price', random.uniform(40, 200))),
+                "images": p.get('images', ["https://via.placeholder.com/800"]),
+                "description": p.get('description', f"High-velocity authentic item for the {room_name} collection."),
+                "brand": p.get('brand', 'Verified Elite Source'),
+                "stock": p.get('stock', random.randint(3, 14)) # Live Stock Count
+            })
+        else:
+            items.append({
+                "raw_title": f"Exclusive {room_name.split(' ')[0]} Asset - Series {random.randint(100, 999)}",
+                "wholesale_cost": round(random.uniform(30.0, 150.0), 2),
+                "images": ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800"],
+                "description": f"Professionally curated for the {room_name} collection. Features premium construction and verified high-end materials.",
+                "brand": "NEXUS Global Direct",
+                "stock": random.randint(3, 14) # Random Scarcity Fallback
+            })
     return items
 
-# --- C-SUITE PIPELINE ---
 async def vp_acquisitions(room_name: str):
     await asyncio.sleep(0.01) 
     return fetch_live_dropship_feed(room_name)
 
 async def vp_marketing(raw_item: dict, room_name: str):
-    # Generates a realistic product name model instead of generic "Asset 1"
-    model_num = random.randint(100, 999)
     return {
         "storefront": room_name.upper(),
-        "name": f"{room_name.split(' ')[0]} Elite Series - Model {model_num}X",
+        "name": raw_item['raw_title'],
         "cost": raw_item['wholesale_cost'],
-        "base_img": raw_item['base_img'],
-        "marketing_copy": f"Professionally curated for the {room_name} collection with guaranteed high-velocity demand and premium construction."
+        "images": raw_item['images'],
+        "marketing_copy": raw_item['description'],
+        "brand": raw_item['brand'],
+        "stock": raw_item['stock']
     }
 
 async def vp_logistics(item: dict):
-    # Changed from Dropship to Priority Dispatch
     item['shippingText'] = f"PRIORITY SECURE DISPATCH: {random.randint(3, 6)} DAYS"
     return item
 
 async def vp_media_security(item: dict):
-    item['images'] = [item['base_img']]
     item['specs'] = ProductSpecs(
-        manufacturer="Curated Elite Brands", 
+        manufacturer=item['brand'], 
         condition="Pristine / Factory Sealed", 
         authenticity_verified=True
     )
     return item
 
 async def vp_auditor(item: dict):
-    # Enforces a strict 45% retail markup strategy
     markup_multiplier = 1.45
     target_price = round(item['cost'] * markup_multiplier, 2)
     margin = (target_price - item['cost']) / target_price
@@ -106,7 +137,8 @@ async def vp_auditor(item: dict):
         shippingText=item['shippingText'], 
         rating=round(random.uniform(4.5, 5.0), 1),
         marketing_copy=item['marketing_copy'], 
-        specs=item['specs']
+        specs=item['specs'],
+        stock_count=item['stock']
     )
 
 @app.get("/api/matrix")
