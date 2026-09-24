@@ -7,8 +7,6 @@ import urllib.parse
 from typing import List, Optional
 from datetime import datetime
 from dotenv import load_dotenv
-import requests
-from bs4 import BeautifulSoup
 import stripe
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -77,27 +75,28 @@ STOREFRONTS = [
 ]
 
 # -----------------------------------------------------------------------------
-# MEDIA ENRICHMENT ENGINE (MANUFACTURER SCRAPING & KILL SHOT CURATION)
+# MEDIA ENRICHMENT ENGINE (NATIVE SCRAPING - NO EXTERNAL LIBRARIES)
 # -----------------------------------------------------------------------------
 def enrich_manufacturer_media(brand: str, title: str) -> dict:
-    """Scrapes raw .mp4 and .pdf links directly to prevent site leakage."""
+    """Scrapes raw .mp4 and .pdf links using built-in Python tools only."""
     clean_title = re.sub(r'[^a-zA-Z0-9 ]', '', title)
     results = {"video_url": None, "spec_sheet": None}
     
     try:
         query = urllib.parse.quote(f"{brand} {clean_title} promotional mp4 OR spec sheet pdf")
         url = f"https://html.duckduckgo.com/html/?q={query}"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
-        res = requests.get(url, headers=headers, timeout=3)
-        if res.status_code == 200:
-            soup = BeautifulSoup(res.text, 'html.parser')
-            for a in soup.find_all('a', href=True):
-                href = a['href']
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        
+        with urllib.request.urlopen(req, timeout=3) as res:
+            html = res.read().decode('utf-8')
+            # Use native regex to isolate href links
+            links = re.findall(r'href=[\'"]?([^\'" >]+)', html)
+            for href in links:
                 if "/l/?kh=-1&uddg=" in href:
                     href = urllib.parse.unquote(href.split("uddg=")[1].split("&")[0])
-                if ".mp4" in href and not results["video_url"]:
+                if ".mp4" in href.lower() and not results["video_url"]:
                     results["video_url"] = href
-                if ".pdf" in href and not results["spec_sheet"]:
+                if ".pdf" in href.lower() and not results["spec_sheet"]:
                     results["spec_sheet"] = href
                 if results["video_url"] and results["spec_sheet"]:
                     break
@@ -148,7 +147,6 @@ def fetch_raw_storefront_assets(room_name: str) -> List[dict]:
     room_upper = room_name.upper()
     items = []
 
-    # ROOM 21 & VAULT: Presales and High-Demand Allocations (20-30% above MSRP)
     if "PRE-RELEASE" in room_upper or "ROOM 21" in room_upper or "VAULT" in room_upper:
         allocations = [
             ("Tom Brady 1-of-1 Refractor Autograph", 3500.0, "Panini National Treasures", 1, "12 x 8 x 2 in", "1.5 lbs"),
@@ -179,7 +177,6 @@ def fetch_raw_storefront_assets(room_name: str) -> List[dict]:
             })
         return items
 
-    # COMMODITY & TRENDING STOREFRONTS (Zendrop API or Verified Fallback)
     query_map = {
         "TECH": "smart gadgets", "AUTO": "automotive parts", "GOLF": "golf accessories",
         "HOME": "luxury home fixtures", "HUMIDOR": "cigar humidor", "ART": "sculpture design",
@@ -216,7 +213,6 @@ def fetch_raw_storefront_assets(room_name: str) -> List[dict]:
     except Exception:
         pass
 
-    # Ensure exact 13-item quota is always met
     idx = 1
     while len(items) < 13:
         items.append({
@@ -240,7 +236,6 @@ def fetch_raw_storefront_assets(room_name: str) -> List[dict]:
 async def agent_enrichment(raw_item: dict, room_name: str) -> NexusProduct:
     cost = raw_item["wholesale_cost"]
     
-    # Pricing Rules (Presales command 20-30% premium; standard retail uses multiplier)
     if raw_item["is_presale"]:
         target_price = round(cost * 1.30, 2)
     elif cost < 50:
@@ -252,11 +247,9 @@ async def agent_enrichment(raw_item: dict, room_name: str) -> NexusProduct:
 
     margin = round(((target_price - cost) / target_price) * 100, 1)
     
-    # Curate media
     gallery = curate_image_spread(raw_item.get("images", []), room_name)
     media = enrich_manufacturer_media(raw_item["brand"], raw_item["title"])
     
-    # Amistad SLA check (Presale bypass allows custom release schedule)
     if raw_item["is_presale"]:
         shipping_badge = "PRIORITY SECURE ALLOCATION: CONFIRMED PRE-ORDER"
     else:
