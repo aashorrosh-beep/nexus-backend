@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- LIVE API KEYS ---
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")  # Test Mode Key
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # MASTER LIVE SWITCH: Activated for Zendrop Production
@@ -57,10 +57,6 @@ STOREFRONTS = [
 ]
 
 def fetch_live_dropship_feed(room_name: str):
-    if SUPPLIER_NETWORK == "ZENDROP":
-        # PRODUCTION SLOT: The live Zendrop API connection logic will go here
-        pass 
-    
     room_upper = room_name.upper()
 
     # STRICT VAULT ROUTING: Simulating high-value secure assets
@@ -92,64 +88,81 @@ def fetch_live_dropship_feed(room_name: str):
             }
         ]
 
-    # SANDBOX FALLBACK (While Pretending Live or missing Zendrop items)
+    # --- LIVE ZENDROP PRODUCTION ROUTING ---
     search_query = "premium"
-    if "TECH" in room_upper or "OFFICE" in room_upper: 
-        search_query = "laptop"
-    elif "AUTO" in room_upper: 
-        search_query = "vehicle"
-    elif "BEAUTY" in room_upper or "GROOMING" in room_upper: 
-        search_query = "fragrance"
-    elif "HOME" in room_upper or "RENOVATION" in room_upper: 
-        search_query = "furniture"
-    elif "TRAVEL" in room_upper: 
-        search_query = "bag"
-    elif "ART" in room_upper or "CREATIVE" in room_upper:
-        search_query = "decor"
-    elif "GOLF" in room_upper or "ATHLETIC" in room_upper:
-        search_query = "sports"
-    
-    try:
-        url = f"https://dummyjson.com/products/search?q={search_query}&limit=10"
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response:
-            data = json.loads(response.read().decode())
-            products = data.get("products", [])
-    except Exception as e:
-        products = []
+    if "TECH" in room_upper or "OFFICE" in room_upper: search_query = "electronics"
+    elif "AUTO" in room_upper: search_query = "automotive"
+    elif "BEAUTY" in room_upper or "GROOMING" in room_upper: search_query = "beauty"
+    elif "HOME" in room_upper or "RENOVATION" in room_upper: search_query = "home"
+    elif "TRAVEL" in room_upper: search_query = "travel"
+    elif "ART" in room_upper or "CREATIVE" in room_upper: search_query = "art"
+    elif "GOLF" in room_upper or "ATHLETIC" in room_upper: search_query = "sports"
 
     items = []
-    for p in products[:10]:
-        items.append({
-            "raw_title": p.get('title', "Premium Asset"),
-            "wholesale_cost": float(p.get('price', random.uniform(40, 200))),
-            "images": p.get('images', ["https://via.placeholder.com/800"]),
-            "description": p.get('description', "High-velocity item."),
-            "brand": p.get('brand', 'Verified Elite Source'),
-            "stock": p.get('stock', random.randint(3, 14))
-        })
+    
+    if SUPPLIER_NETWORK == "ZENDROP" and SUPPLIER_API_KEY != "pending_key":
+        try:
+            url = f"https://api.zendrop.com/v1/products?q={search_query}&limit=13"
+            req = urllib.request.Request(url, headers={
+                'Authorization': f'Bearer {SUPPLIER_API_KEY}',
+                'Content-Type': 'application/json',
+                'User-Agent': 'Mozilla/5.0'
+            })
+            with urllib.request.urlopen(req, timeout=5) as response:
+                data = json.loads(response.read().decode())
+                products = data.get("data", [])
+                
+                for p in products[:13]:
+                    items.append({
+                        "raw_title": p.get('title', "Premium Market Asset"),
+                        "wholesale_cost": float(p.get('price', random.uniform(40, 200))),
+                        "images": [p.get('image_url', "https://via.placeholder.com/800")],
+                        "description": p.get('description', "Live market drop. Verified source."),
+                        "brand": p.get('vendor', 'Zendrop Elite'),
+                        "stock": p.get('inventory_quantity', random.randint(3, 14))
+                    })
+            if items:
+                return items
+        except Exception as e:
+            print(f"-> [ZENDROP API ROUTE FAILED] {e}")
+
+    # SANDBOX FALLBACK (Safety net)
+    try:
+        url = f"https://dummyjson.com/products/search?q={search_query}&limit=13"
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            products = data.get("products", [])
+            for p in products[:13]:
+                items.append({
+                    "raw_title": p.get('title', "Premium Asset"),
+                    "wholesale_cost": float(p.get('price', random.uniform(40, 200))),
+                    "images": p.get('images', ["https://via.placeholder.com/800"]),
+                    "description": p.get('description', "High-velocity item."),
+                    "brand": p.get('brand', 'Verified Elite Source'),
+                    "stock": p.get('stock', random.randint(3, 14))
+                })
+    except Exception:
+        pass
+
     return items
 
 # --- THE C-SUITE AGENTS ---
 async def vp_intelligence(raw_item: dict):
-    # THE INTELLIGENCE FEED: Simulates scraping Google Trends / TikTok hashtags
     base_score = random.randint(60, 99) 
     raw_item['viral_velocity'] = base_score
-    
     if base_score < 70:
         return None 
     return raw_item
 
 async def vp_acquisitions(room_name: str):
-    await asyncio.sleep(0.01) 
+    await asyncio.sleep(0.1) 
     raw_feed = fetch_live_dropship_feed(room_name)
     approved_items = []
-    
     for item in raw_feed:
         trend_approved = await vp_intelligence(item)
         if trend_approved:
             approved_items.append(trend_approved)
-            
     return approved_items
 
 async def vp_marketing(raw_item: dict, room_name: str):
@@ -177,18 +190,27 @@ async def vp_media_security(item: dict):
     return item
 
 async def vp_auditor(item: dict):
-    markup_multiplier = 1.45
-    target_price = round(item['cost'] * markup_multiplier, 2)
-    margin = (target_price - item['cost']) / target_price
-    
+    cost = item['cost']
+    if cost < 50:
+        target_price = cost * 2.2
+    elif cost < 150:
+        target_price = cost * 1.6 + 25
+    else:
+        target_price = cost * 1.4 + 55
+
+    target_price = round(target_price, 2)
+    margin = (target_price - cost) / target_price
+
+    compliant_images = [img if "?" in img else f"{img}?w=800&q=80" for img in item['images']]
+
     return NexusProduct(
         sku=f"DS-VERIFIED-{random.randint(100000, 999999)}",
         storefront=item['storefront'], 
         name=item['name'], 
         price=target_price, 
-        cost=item['cost'],
+        cost=cost,
         margin_pct=round(margin * 100, 1), 
-        images=item['images'],
+        images=compliant_images,
         shippingText=item['shippingText'], 
         rating=round(random.uniform(4.5, 5.0), 1),
         marketing_copy=item['marketing_copy'], 
@@ -211,15 +233,12 @@ async def get_matrix(category: str = "all"):
                 live_floor.append(approved.model_dump())
     return live_floor
 
-# --- THE TRAFFIC CANNON (Google Shopping Auto-Feed) ---
 @app.get("/api/merchant-feed")
 async def generate_google_shopping_feed():
     inventory = await get_matrix()
-    
     xml_content = '<?xml version="1.0" encoding="UTF-8" ?>\n'
     xml_content += '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n'
     xml_content += '<channel>\n<title>NEXUS Matrix Mall</title>\n<link>http://167.172.154.139:3000</link>\n'
-    
     for item in inventory:
         xml_content += '<item>\n'
         xml_content += f"  <g:id>{item['sku']}</g:id>\n"
@@ -231,8 +250,9 @@ async def generate_google_shopping_feed():
         xml_content += f"  <g:availability>{'in_stock' if item['stock_count'] > 0 else 'out_of_stock'}</g:availability>\n"
         xml_content += f"  <g:price>{item['price']} USD</g:price>\n"
         xml_content += f"  <g:brand>{item['specs']['manufacturer']}</g:brand>\n"
+        xml_content += f"  <g:min_handling_time>1</g:min_handling_time>\n"
+        xml_content += f"  <g:max_handling_time>3</g:max_handling_time>\n"
         xml_content += '</item>\n'
-        
     xml_content += '</channel>\n</rss>'
     return Response(content=xml_content, media_type="application/xml")
 
