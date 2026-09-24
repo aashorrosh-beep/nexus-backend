@@ -58,14 +58,53 @@ def fetch_live_dropship_feed(room_name: str):
         # PRODUCTION SLOT: This is where the live Spocket API will connect
         pass 
     
+    room_upper = room_name.upper()
+
+    # STRICT VAULT ROUTING: Simulating high-value secure assets
+    if "VAULT" in room_upper or "PRE-RELEASE" in room_upper:
+        return [
+            {
+                "raw_title": "Tom Brady Autographed Card (Verified Authenticity)",
+                "wholesale_cost": 3500.00,
+                "images": ["https://via.placeholder.com/800"],
+                "description": "Highly sought-after graded autographed memorabilia. Investment grade.",
+                "brand": "Elite Sports Vault",
+                "stock": 1
+            },
+            {
+                "raw_title": "Pokémon TCG: Sealed Elite Trainer Box Display",
+                "wholesale_cost": 450.00,
+                "images": ["https://via.placeholder.com/800"],
+                "description": "Factory sealed premium display case containing mint Elite Trainer Boxes.",
+                "brand": "The Pokémon Company",
+                "stock": 5
+            },
+            {
+                "raw_title": "Caitlin Clark Rookie Gold Refractor",
+                "wholesale_cost": 850.00,
+                "images": ["https://via.placeholder.com/800"],
+                "description": "Pristine rookie card variant with exceptional centering and surface grade.",
+                "brand": "Elite Sports Vault",
+                "stock": 2
+            }
+        ]
+
     # SANDBOX FALLBACK (While Pretending Live)
     search_query = "premium"
-    if "TECH" in room_name: search_query = "laptop"
-    elif "AUTO" in room_name: search_query = "vehicle"
-    elif "BEAUTY" in room_name: search_query = "beauty"
-    elif "GROOMING" in room_name: search_query = "fragrance"
-    elif "HOME" in room_name: search_query = "furniture"
-    elif "TRAVEL" in room_name: search_query = "bag"
+    if "TECH" in room_upper or "OFFICE" in room_upper: 
+        search_query = "laptop"
+    elif "AUTO" in room_upper: 
+        search_query = "vehicle"
+    elif "BEAUTY" in room_upper or "GROOMING" in room_upper: 
+        search_query = "fragrance"
+    elif "HOME" in room_upper or "RENOVATION" in room_upper: 
+        search_query = "furniture"
+    elif "TRAVEL" in room_upper: 
+        search_query = "bag"
+    elif "ART" in room_upper or "CREATIVE" in room_upper:
+        search_query = "decor"
+    elif "GOLF" in room_upper or "ATHLETIC" in room_upper:
+        search_query = "sports"
     
     try:
         url = f"https://dummyjson.com/products/search?q={search_query}&limit=10"
@@ -89,10 +128,8 @@ def fetch_live_dropship_feed(room_name: str):
     return items
 
 # --- THE C-SUITE AGENTS ---
-
 async def vp_intelligence(raw_item: dict):
     # THE INTELLIGENCE FEED: Simulates scraping Google Trends / TikTok hashtags
-    # In full production, this pings real social APIs to score the item
     base_score = random.randint(60, 99) 
     raw_item['viral_velocity'] = base_score
     
