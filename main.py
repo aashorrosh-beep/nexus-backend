@@ -20,7 +20,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 SUPPLIER_API_KEY = os.getenv("ZENDROP_API_KEY", "pending_key")
 SERPAPI_KEY = os.getenv("SERPAPI_KEY") or os.getenv("SERPER_API_KEY")
 
-app = FastAPI(title="NEXUS Matrix Mall Engine - Dual-Brain 21-Room Production")
+app = FastAPI(title="NEXUS Matrix Mall Engine - Dual-Brain 22-Room Production")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -71,7 +71,8 @@ STOREFRONTS = [
     "Health & Wellness Tech", "Beauty & Personal Care", "Eco-Friendly Living", "Smart Pet Tech",
     "Home Office Ergonomics", "Outdoor & Survival Gear", "Gourmet Food & Culinary", "Men's Grooming",
     "Travel Tech & Luggage", "Fitness & Recovery", "Gaming & Esports", "Early Education Tech",
-    "Smart Kitchen Gadgets", "Room 21: Pre-Release Acquisitions"
+    "Smart Kitchen Gadgets", "Room 21: Pre-Release Acquisitions", 
+    "Room 22: Squishmallows & Blind Boxes"
 ]
 
 # -----------------------------------------------------------------------------
@@ -94,6 +95,12 @@ def curate_image_spread(base_images: List[str], category: str) -> List[str]:
             "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800&q=80",
             "https://images.unsplash.com/photo-1563089145-599997674d42?w=800&q=80"
         ],
+        "NOVELTY": [
+            "https://images.unsplash.com/photo-1558066141-8f553a0058b8?w=800&q=80",
+            "https://images.unsplash.com/photo-1606011334315-025e4baab810?w=800&q=80",
+            "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&q=80",
+            "https://images.unsplash.com/photo-1533513700299-4081b5c4644a?w=800&q=80"
+        ],
         "GENERAL": [
             "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
             "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
@@ -102,7 +109,17 @@ def curate_image_spread(base_images: List[str], category: str) -> List[str]:
             "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80"
         ]
     }
-    bank = fallbacks["CARDS"] if ("CARD" in category.upper() or "VAULT" in category.upper()) else fallbacks["GENERAL"]
+    
+    if "CARD" in category.upper() or "VAULT" in category.upper(): 
+        bank = fallbacks["CARDS"]
+    elif "ROOM 22" in category.upper() or "SQUISHMALLOW" in category.upper(): 
+        bank = fallbacks["NOVELTY"]
+    else: 
+        bank = fallbacks["GENERAL"]
+        
+    # Shuffle to prevent identical clone images when padding rooms
+    random.shuffle(bank)
+    
     for img in bank:
         if len(curated) >= 5: break
         if img not in curated: curated.append(img)
@@ -137,6 +154,31 @@ def fetch_raw_storefront_assets(room_name: str) -> List[dict]:
                 "description": f"Verified allocation asset. Vault-secured provenance for {name}.",
                 "images": [], "dimensions": dims, "weight": wt,
                 "is_presale": True if "PRE-RELEASE" in room_upper or "Presale" in name else False
+            })
+        return items
+        
+    elif "ROOM 22" in room_upper or "SQUISHMALLOW" in room_upper:
+        allocations = [
+            ("Squishmallows 16-Inch Rare Connor The Cow", 45.0, "Kellytoy", 8, "16 x 16 x 16 in", "2.0 lbs"),
+            ("Pop Mart Skullpanda Everyday Wonderland Blind Box (Whole Set)", 145.0, "Pop Mart", 5, "12 x 8 x 6 in", "1.5 lbs"),
+            ("Squishmallows 12-Inch Archie The Axolotl", 35.0, "Kellytoy", 14, "12 x 12 x 12 in", "1.2 lbs"),
+            ("Sonny Angel Mini Figure Original Series (Case of 12)", 120.0, "Dreams Inc.", 6, "10 x 8 x 5 in", "1.8 lbs"),
+            ("Smiski Glow-In-The-Dark Figure (Set of 6)", 65.0, "Dreams Inc.", 10, "8 x 6 x 4 in", "1.0 lbs"),
+            ("Squishmallows Pokemon Pikachu 20-Inch Jumbo Plush", 85.0, "Kellytoy", 4, "20 x 20 x 20 in", "3.5 lbs"),
+            ("Pop Mart Hirono City of Mercy Series Blind Box (Whole Set)", 150.0, "Pop Mart", 3, "12 x 8 x 6 in", "1.5 lbs"),
+            ("Jellycat Amuseable Silly Succulent Plush", 32.0, "Jellycat", 18, "6 x 3 x 3 in", "0.5 lbs"),
+            ("Tokidoki Unicorno Series 12 Blind Box Display", 110.0, "Tokidoki", 7, "10 x 8 x 6 in", "1.6 lbs"),
+            ("Squishmallows 14-Inch Gengar Pokemon Edition", 55.0, "Kellytoy", 9, "14 x 14 x 14 in", "1.5 lbs"),
+            ("Jellycat Bashful Bunny Huge Size", 65.0, "Jellycat", 5, "20 x 8 x 6 in", "1.2 lbs"),
+            ("Pop Mart Dimoo Dating Series Blind Box (Whole Set)", 140.0, "Pop Mart", 4, "12 x 8 x 6 in", "1.5 lbs"),
+            ("Squishmallows Jack the Black Cat (Limited Edition)", 250.0, "Kellytoy", 1, "16 x 16 x 16 in", "2.0 lbs"),
+        ]
+        for name, cost, brand, stock, dims, wt in allocations[:13]:
+            items.append({
+                "title": name, "wholesale_cost": cost, "brand": brand, "stock": stock,
+                "description": f"Verified authentic {brand} highly-allocated collectible. Mint condition.",
+                "images": [], "dimensions": dims, "weight": wt,
+                "is_presale": False
             })
         return items
 
