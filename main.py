@@ -27,7 +27,7 @@ app.add_middleware(
 )
 
 # -----------------------------------------------------------------------------
-# GLOBAL IN-MEMORY CACHE (PREVENTS RENDER TIMEOUTS)
+# GLOBAL IN-MEMORY CACHE
 # -----------------------------------------------------------------------------
 MATRIX_CACHE = {}
 CACHE_TIMESTAMP = None
@@ -63,6 +63,11 @@ class NexusProduct(BaseModel):
     viral_velocity: int
     is_presale: bool = False
 
+class CheckoutRequest(BaseModel):
+    name: str
+    price: float
+    image: str
+
 STOREFRONTS = [
     "Room 22: Squishmallows & Blind Boxes", "Room 21: Pre-Release Acquisitions", "Trading Cards Vault", 
     "Tech & Mobile Gear", "High-Performance Auto", "Golf & Athletic Apparel", "Home Renovation & Fixtures", 
@@ -84,18 +89,14 @@ def enrich_manufacturer_media(brand: str, title: str) -> dict:
     }
 
 # -----------------------------------------------------------------------------
-# LIVE API AGGREGATOR NODES (USING YOUR KEYS)
+# LIVE API AGGREGATOR NODES
 # -----------------------------------------------------------------------------
 def fetch_live_network_assets(room_name: str) -> List[dict]:
-    """
-    Actively dials the Supplier/SERP API using your keys to pull real market assets.
-    """
     items = []
     
-    # 1. ATTEMPT LIVE DATA FETCH (Requires SERPAPI_KEY in Render Env Vars)
+    # 1. ATTEMPT LIVE DATA FETCH
     if SERPAPI_KEY and SERPAPI_KEY != "pending_key":
         try:
-            # Query engineering to pull premium assets related to the room
             query = urllib.parse.quote(f"premium {room_name.replace('Room 21:', '').replace('Room 22:', '')} gear -cheap")
             url = f"https://serpapi.com/search.json?engine=google_shopping&q={query}&api_key={SERPAPI_KEY}&num=25"
             
@@ -125,7 +126,7 @@ def fetch_live_network_assets(room_name: str) -> List[dict]:
         except Exception as e:
             print(f"Live API Blocked/Timeout for {room_name}: {e}")
 
-    # 2. FALLBACK LOCAL ENGINE (If API limits hit or keys fail)
+    # 2. FALLBACK LOCAL ENGINE
     idx = len(items) + 1
     material_types = ["Aerospace Aluminum", "High-Density Polymer", "Carbon Fiber Reinforced", "Investment Grade Steel"]
     
@@ -136,7 +137,6 @@ def fetch_live_network_assets(room_name: str) -> List[dict]:
         else: cost = round(random.uniform(35.0, 80.0), 2)
 
         clean_text = urllib.parse.quote(f"{room_name} Asset {idx:02d}"[:22])
-        # Auto-generates the 5-image gallery spread
         gallery = [
             f"https://placehold.co/800x800/111/fcba03?text={clean_text}",
             f"https://placehold.co/800x800/222/fcba03?text={clean_text}+|+Angle+02",
@@ -172,14 +172,13 @@ async def agent_enrichment(raw_item: dict, room_name: str) -> NexusProduct:
 
     margin = round(((target_price - cost) / target_price) * 100, 1)
     
-    # Ensures 5 images are populated
     gallery = raw_item.get("images", [])
     if not gallery:
         clean_text = urllib.parse.quote(raw_item["title"][:22])
         gallery = [f"https://placehold.co/800x800/111/fcba03?text={clean_text}"]
     
     while len(gallery) < 5:
-        gallery.append(gallery[0]) # Pad missing angles safely
+        gallery.append(gallery[0])
         
     media = enrich_manufacturer_media(raw_item["brand"], raw_item["title"])
     shipping_badge = "PRIORITY SECURE ALLOCATION" if raw_item["is_presale"] else f"PRIORITY SECURE DISPATCH: {random.randint(3, 6)} DAYS"
@@ -201,7 +200,6 @@ async def agent_enrichment(raw_item: dict, room_name: str) -> NexusProduct:
     )
 
 async def process_room(room: str) -> List[dict]:
-    # Pushes the heavy API fetch to a background thread so it doesn't block
     raw_batch = await asyncio.to_thread(fetch_live_network_assets, room)
     room_catalog = []
     for raw in raw_batch:
@@ -219,24 +217,43 @@ def health(): return {"status": "ONLINE", "engine": "LIVE NETWORK AGGREGATOR"}
 async def get_matrix(category: str = "all", force_refresh: bool = False):
     global MATRIX_CACHE, CACHE_TIMESTAMP
     
-    # 1. Return Instant Cache if available (prevents browser hanging)
     if MATRIX_CACHE and not force_refresh:
         if category == "all": return MATRIX_CACHE.get("all", [])
         return [item for item in MATRIX_CACHE.get("all", []) if category.lower() in item["storefront"].lower()]
 
-    # 2. Asynchronous Live Fetching (Fires all 22 rooms at the exact same time)
     target_rooms = STOREFRONTS if category == "all" else [r for r in STOREFRONTS if category.lower() in r.lower()]
     
     tasks = [process_room(room) for room in target_rooms]
     results = await asyncio.gather(*tasks)
     
-    # Flatten results
     catalog = [item for sublist in results for item in sublist]
     
-    # Update Cache
     if category == "all":
         MATRIX_CACHE["all"] = catalog
         CACHE_TIMESTAMP = datetime.now()
         
     return catalog
-    
+
+@app.post("/api/checkout")
+async def create_checkout_session(req: CheckoutRequest):
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "unit_amount": int(req.price * 100),
+                    "product_data": {
+                        "name": req.name,
+                        "images": [req.image] if req.image else [],
+                    },
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
+            success_url="http://167.172.154.139:3000/?checkout=success",
+            cancel_url="http://167.172.154.139:3000/?checkout=cancelled",
+        )
+        return {"url": session.url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
