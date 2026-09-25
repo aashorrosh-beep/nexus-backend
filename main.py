@@ -3,12 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import stripe
 import os
-import random
+import requests
 
-# This is the line that was missing - it boots the server
 app = FastAPI()
 
-# Allow your DigitalOcean frontend to talk to this Render backend
+# Allow frontend connection
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,8 +16,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connects to the sk_live_ key you set in Render Environment Variables
+# Secure API Keys pulled from Render Environment Variables
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+ZENDROP_KEY = os.getenv("ZENDROP_API_KEY")
 
 class CheckoutItem(BaseModel):
     name: str
@@ -49,12 +49,13 @@ async def create_checkout_session(item: CheckoutItem):
     except Exception as e:
         return {"error": str(e)}
 
-# The new Dynamic Margin & Payload Mapper
+# Dynamic Pricing & Payload Mapper
 def map_supplier_data_to_nexus(raw_api_item):
     wholesale_cost = float(raw_api_item.get('cost', 0.00))
     retail_price = round(wholesale_cost * 1.85, 2)
     shipping_text = "Standard Dispatch"
     
+    # Conditional Margin Tiers
     if retail_price <= 20.00:
         shipping_text = "+ $4.99 Shipping"
         retail_price += 4.99
@@ -69,24 +70,23 @@ def map_supplier_data_to_nexus(raw_api_item):
         shipping_text = "FREE Secure Dispatch"
 
     raw_images = raw_api_item.get('images', [])
-    hero_img = raw_images[0] if len(raw_images) > 0 else "https://via.placeholder.com/800x800.png?text=IMAGE+SYNCING"
     
     return {
-        "sku": raw_api_item.get('sku', f"DS-VERIFIED-{str(id(raw_api_item))[-6:]}"),
-        "name": raw_api_item.get('title', 'Verified Manufacturer Asset'),
+        "sku": str(raw_api_item.get('sku', f"DS-VERIFIED-{str(id(raw_api_item))[-6:]}")),
+        "name": str(raw_api_item.get('title', 'Verified Manufacturer Asset')),
         "price": round(retail_price, 2),
-        "stock_count": raw_api_item.get('inventory_quantity', random.randint(3, 24)),
-        "hero_image": hero_img,
+        "stock_count": int(raw_api_item.get('inventory_quantity', 15)),
+        "hero_image": str(raw_images[0]),
         "images": raw_images,
         "video_url": raw_api_item.get('video_url', None),
         "shippingText": shipping_text,
-        "storefront": raw_api_item.get('category', 'Trading Cards Vault'),
+        "storefront": str(raw_api_item.get('category', 'Trading Cards Vault')),
         "specs": {
-            "manufacturer": raw_api_item.get('brand', 'Direct Manufacturer Verified'),
+            "manufacturer": str(raw_api_item.get('brand', 'Direct Manufacturer')),
             "condition": "Pristine / Factory Sealed",
-            "material_grade": raw_api_item.get('material', 'Commercial Grade'),
-            "dimensions": raw_api_item.get('dimensions', 'Data syncing...'),
-            "shipping_weight": raw_api_item.get('weight', 'Calculated at dispatch'),
+            "material_grade": str(raw_api_item.get('material', 'Commercial Grade')),
+            "dimensions": str(raw_api_item.get('dimensions', 'Verified Specs Available')),
+            "shipping_weight": str(raw_api_item.get('weight', 'Calculated at dispatch')),
             "warranty_status": "Active Manufacturer Guarantee"
         }
     }
@@ -94,26 +94,37 @@ def map_supplier_data_to_nexus(raw_api_item):
 @app.get("/api/matrix")
 async def get_matrix():
     inventory = []
-    storefronts = [
-        "Room 22: Squishmallows & Blind Boxes", "Room 21: Pre-Release Acquisitions", "Trading Cards Vault", 
-        "Tech & Mobile Gear", "High-Performance Auto", "Golf & Athletic Apparel", "Home Renovation & Fixtures", 
-        "Luxury & Humidor Accessories", "Fine Arts & Creative Design", "Health & Wellness Tech", 
-        "Beauty & Personal Care", "Eco-Friendly Living", "Smart Pet Tech", "Home Office Ergonomics", 
-        "Outdoor & Survival Gear", "Gourmet Food & Culinary", "Men's Grooming", 
-        "Travel Tech & Luggage", "Fitness & Recovery", "Gaming & Esports", 
-        "Early Education Tech", "Smart Kitchen Gadgets"
-    ]
     
-    # Simulates live API pull routed through your new dynamic margin mapper
-    for room in storefronts:
-        for i in range(1, 26):
-            raw_item = {
-                "cost": random.uniform(8.00, 150.00), 
-                "title": f"{room} Asset {i}",
-                "category": room,
-                "brand": "NEXUS Verified API",
-                "sku": f"NX-{i}-{room[:3].upper()}"
-            }
-            inventory.append(map_supplier_data_to_nexus(raw_item))
+    if not ZENDROP_KEY:
+        print("CRITICAL: ZENDROP_API_KEY is missing from Render Environment Variables.")
+        return []
+
+    try:
+        # The Live Connection to the Supplier
+        headers = {
+            "Authorization": f"Bearer {ZENDROP_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        response = requests.get("https://api.zendrop.com/v1/products", headers=headers, timeout=15)
+        
+        if response.status_code == 200:
+            live_items = response.json().get('data', [])
             
-    return inventory
+            for raw_item in live_items:
+                # STRICT GATEKEEPER: No pictures = dropped instantly
+                images = raw_item.get('images', [])
+                if not images or len(images) == 0:
+                    continue
+                    
+                # STRICT GATEKEEPER: Out of stock = dropped instantly
+                if int(raw_item.get('inventory_quantity', 0)) <= 0:
+                    continue
+                    
+                # If it passes the gates, map it and send it to the storefront
+                inventory.append(map_supplier_data_to_nexus(raw_item))
+                
+        return inventory
+    except Exception as e:
+        print(f"Supplier Sync Error: {e}")
+        return []
