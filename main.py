@@ -4,10 +4,10 @@ from pydantic import BaseModel
 import stripe
 import os
 import requests
+import random
 
 app = FastAPI()
 
-# Allow frontend connection
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,9 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Secure API Keys pulled from Render Environment Variables
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-ZENDROP_KEY = os.getenv("ZENDROP_API_KEY")
+# Bulletproofed Keys: .strip() removes any invisible spaces or newlines automatically
+raw_stripe = os.getenv("STRIPE_SECRET_KEY", "")
+stripe.api_key = raw_stripe.strip() if raw_stripe else ""
+
+ZENDROP_KEY = os.getenv("ZENDROP_API_KEY", "").strip()
 
 class CheckoutItem(BaseModel):
     name: str
@@ -49,13 +51,11 @@ async def create_checkout_session(item: CheckoutItem):
     except Exception as e:
         return {"error": str(e)}
 
-# Dynamic Pricing & Payload Mapper
 def map_supplier_data_to_nexus(raw_api_item):
     wholesale_cost = float(raw_api_item.get('cost', 0.00))
     retail_price = round(wholesale_cost * 1.85, 2)
     shipping_text = "Standard Dispatch"
     
-    # Conditional Margin Tiers
     if retail_price <= 20.00:
         shipping_text = "+ $4.99 Shipping"
         retail_price += 4.99
@@ -70,13 +70,14 @@ def map_supplier_data_to_nexus(raw_api_item):
         shipping_text = "FREE Secure Dispatch"
 
     raw_images = raw_api_item.get('images', [])
+    hero_img = raw_images[0] if len(raw_images) > 0 else "https://via.placeholder.com/800x800.png?text=IMAGE+SYNCING"
     
     return {
         "sku": str(raw_api_item.get('sku', f"DS-VERIFIED-{str(id(raw_api_item))[-6:]}")),
         "name": str(raw_api_item.get('title', 'Verified Manufacturer Asset')),
         "price": round(retail_price, 2),
-        "stock_count": int(raw_api_item.get('inventory_quantity', 15)),
-        "hero_image": str(raw_images[0]),
+        "stock_count": int(raw_api_item.get('inventory_quantity', random.randint(3, 24))),
+        "hero_image": str(hero_img),
         "images": raw_images,
         "video_url": raw_api_item.get('video_url', None),
         "shippingText": shipping_text,
@@ -93,38 +94,39 @@ def map_supplier_data_to_nexus(raw_api_item):
 
 @app.get("/api/matrix")
 async def get_matrix():
-    inventory = []
-    
     if not ZENDROP_KEY:
-        print("CRITICAL: ZENDROP_API_KEY is missing from Render Environment Variables.")
-        return []
+        return [{
+            "sku": "ERROR-NO-KEY", "name": "API KEY MISSING", "price": 0.00,
+            "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=MISSING+ZENDROP+KEY",
+            "images": [], "shippingText": "ERROR", "storefront": "System Diagnostics", "specs": {}
+        }]
 
     try:
-        # The Live Connection to the Supplier
-        headers = {
-            "Authorization": f"Bearer {ZENDROP_KEY}",
-            "Content-Type": "application/json"
-        }
-        
+        headers = {"Authorization": f"Bearer {ZENDROP_KEY}", "Content-Type": "application/json"}
         response = requests.get("https://api.zendrop.com/v1/products", headers=headers, timeout=15)
         
-        if response.status_code == 200:
-            live_items = response.json().get('data', [])
+        if response.status_code != 200:
+             return [{
+                "sku": f"ERROR-{response.status_code}", "name": f"Supplier Blocked: Code {response.status_code}", "price": 0.00,
+                "stock_count": 0, "hero_image": f"https://via.placeholder.com/800?text=ERROR+{response.status_code}",
+                "images": [], "shippingText": "ERROR", "storefront": "System Diagnostics", "specs": {}
+            }]
+
+        live_items = response.json().get('data', [])
+        inventory = []
+        for raw_item in live_items:
+            images = raw_item.get('images', [])
+            if not images or len(images) == 0:
+                continue
+            if int(raw_item.get('inventory_quantity', 0)) <= 0:
+                continue
+            inventory.append(map_supplier_data_to_nexus(raw_item))
             
-            for raw_item in live_items:
-                # STRICT GATEKEEPER: No pictures = dropped instantly
-                images = raw_item.get('images', [])
-                if not images or len(images) == 0:
-                    continue
-                    
-                # STRICT GATEKEEPER: Out of stock = dropped instantly
-                if int(raw_item.get('inventory_quantity', 0)) <= 0:
-                    continue
-                    
-                # If it passes the gates, map it and send it to the storefront
-                inventory.append(map_supplier_data_to_nexus(raw_item))
-                
         return inventory
+        
     except Exception as e:
-        print(f"Supplier Sync Error: {e}")
-        return []
+        return [{
+            "sku": "ERROR-CRASH", "name": f"Backend Crash: {str(e)}", "price": 0.00,
+            "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=SERVER+CRASH",
+            "images": [], "shippingText": "ERROR", "storefront": "System Diagnostics", "specs": {}
+        }]
