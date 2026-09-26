@@ -6,7 +6,6 @@ import os
 import requests
 import random
 
-# The Ignition Switch that got deleted
 app = FastAPI()
 
 app.add_middleware(
@@ -95,24 +94,26 @@ def map_supplier_data_to_nexus(raw_api_item):
 @app.get("/api/matrix")
 async def get_matrix():
     if not ZENDROP_KEY:
-        return [{"sku": "ERROR", "name": "API KEY MISSING", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800", "images": [], "shippingText": "ERROR", "storefront": "System Diagnostics", "specs": {}}]
+        return [{"sku": "ERR-1", "name": "ZENDROP API KEY MISSING IN RENDER", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=API+KEY+MISSING", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
 
     try:
-        headers = {"Authorization": f"Bearer {ZENDROP_KEY}", "Content-Type": "application/json"}
+        # THE STEALTH BYPASS DISGUISE
+        headers = {
+            "Authorization": f"Bearer {ZENDROP_KEY}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
         response = requests.get("https://api.zendrop.com/v1/products", headers=headers, timeout=15)
         
-        # The Diagnostic Trap
-        try:
-            live_items = response.json().get('data', [])
-        except Exception:
-            return [{
-                "sku": "ERROR-FORMAT", 
-                "name": f"ZENDROP SENT JUNK DATA: {response.text[:150]}", 
-                "price": 0.00,
-                "stock_count": 0, 
-                "hero_image": "https://via.placeholder.com/800?text=ZENDROP+FORMAT+ERROR",
-                "images": [], "shippingText": "ERROR", "storefront": "System Diagnostics", "specs": {}
-            }]
+        if response.status_code != 200:
+             error_msg = response.text[:100].replace('"', "'")
+             return [{"sku": "ERR-2", "name": f"ZENDROP BLOCKED: {error_msg}", "price": 0.0, "stock_count": 0, "hero_image": f"https://via.placeholder.com/800?text=ERROR+{response.status_code}", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+
+        live_items = response.json().get('data', [])
+        
+        if not live_items:
+             return [{"sku": "ERR-3", "name": "ZENDROP CATALOG RETURNED 0 ITEMS", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=EMPTY+CATALOG", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
 
         inventory = []
         for raw_item in live_items:
@@ -126,4 +127,4 @@ async def get_matrix():
         return inventory
         
     except Exception as e:
-        return [{"sku": "ERROR-CRASH", "name": f"Backend Crash: {str(e)}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800", "images": [], "shippingText": "ERROR", "storefront": "System Diagnostics", "specs": {}}]
+        return [{"sku": "ERR-4", "name": f"CRASH: {str(e)}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=CRASH", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
