@@ -1,1 +1,77 @@
-
+[
+  {
+    "sku": "NX-TCG-001",
+    "name": "Verified: Pokemon 30th Celebration Ultra-Premium Collection",
+    "price": 549.95,
+    "stock_count": 8,
+    "hero_image": "https://images.pokemontcg.io/cel25/15_hires.png",
+    "images": ["https://images.pokemontcg.io/cel25/15_hires.png"],
+    "shippingText": "FREE Dispatch (+ $8.25 Vault Insurance)",
+    "storefront": "Trading Cards Vault",
+    "specs": {
+      "manufacturer": "The Pokemon Company",
+      "condition": "Factory Sealed",
+      "audited": "Dual-Brain Verified"
+    }
+  },
+  {
+    "sku": "NX-MENS-020",
+    "name": "Verified: Premium Men's Grooming Kit",
+    "price": 17.16,
+    "stock_count": 45,
+    "hero_image": "https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&w=800&q=80"],
+    "shippingText": "FREE Secure Dispatch",
+    "storefront": "Beauty & Personal Care",
+    "specs": {
+      "manufacturer": "Direct Manufacturer Verified",
+      "condition": "Pristine",
+      "audited": "Dual-Brain Verified"
+    }
+  },
+  {
+    "sku": "NX-TECH-001",
+    "name": "Verified: Nexus Core Hardware Node",
+    "price": 199.99,
+    "stock_count": 15,
+    "hero_image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+    "images": ["https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"],
+    "shippingText": "FREE Dispatch (+ $3.00 Vault Insurance)",
+    "storefront": "Tech & Mobile Gear",
+    "specs": {
+      "manufacturer": "Nexus Systems",
+      "condition": "New",
+      "audited": "Dual-Brain Verified"
+    }
+  },
+  {
+    "sku": "NX-HOME-001",
+    "name": "Verified: Luxury Home Humidor Setup",
+    "price": 249.99,
+    "stock_count": 12,
+    "hero_image": "https://images.unsplash.com/photo-1611754026369-0268ecf2fb70?w=800",
+    "images": ["https://images.unsplash.com/photo-1611754026369-0268ecf2fb70?w=800"],
+    "shippingText": "FREE Dispatch (+ $3.75 Vault Insurance)",
+    "storefront": "Luxury & Humidor Accessories",
+    "specs": {
+      "manufacturer": "Premium Woods",
+      "condition": "Pristine",
+      "audited": "Dual-Brain Verified"
+    }
+  },
+  {
+    "sku": "NX-GOLF-045",
+    "name": "Verified: Tour-Grade Athletic Polo",
+    "price": 65.50,
+    "stock_count": 22,
+    "hero_image": "https://images.unsplash.com/photo-1535139262971-c51845709a48?w=800",
+    "images": ["https://images.unsplash.com/photo-1535139262971-c51845709a48?w=800"],
+    "shippingText": "FREE Secure Dispatch",
+    "storefront": "Golf & Athletic Apparel",
+    "specs": {
+      "manufacturer": "Athletic 360",
+      "condition": "New",
+      "audited": "Dual-Brain Verified"
+    }
+  }
+]
