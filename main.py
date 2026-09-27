@@ -1,10 +1,10 @@
+import os
+import requests
+import stripe
+import random
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import stripe
-import os
-import requests
-import random
 
 app = FastAPI()
 
@@ -43,8 +43,8 @@ async def create_checkout_session(item: CheckoutItem):
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='http://167.172.154.139:3000/?checkout=success',
-            cancel_url='http://167.172.154.139:3000/?checkout=canceled',
+            success_url='https://trendingabyss.com/?checkout=success',
+            cancel_url='https://trendingabyss.com/',
         )
         return {"url": session.url}
     except Exception as e:
@@ -127,4 +127,4 @@ async def get_matrix():
         return inventory
         
     except Exception as e:
-        return [{"sku": "ERR-4", "name": f"CRASH: {str(e)}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=CRASH", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+        return [{"sku": "ERR-4", "name": f"SERVER CRASH: {str(e)[:50]}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=SERVER+ERROR", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
