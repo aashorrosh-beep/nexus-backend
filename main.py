@@ -94,10 +94,9 @@ def map_supplier_data_to_nexus(raw_api_item):
 @app.get("/api/matrix")
 async def get_matrix():
     if not ZENDROP_KEY:
-        return [{"sku": "ERR-1", "name": "ZENDROP API KEY MISSING IN RENDER", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=API+KEY+MISSING", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+        return [{"sku": "ERR-1", "name": "ZENDROP API KEY MISSING", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=API+KEY+MISSING", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
 
     try:
-        # THE STEALTH BYPASS DISGUISE
         headers = {
             "Authorization": f"Bearer {ZENDROP_KEY}",
             "Content-Type": "application/json",
@@ -108,12 +107,19 @@ async def get_matrix():
         
         if response.status_code != 200:
              error_msg = response.text[:100].replace('"', "'")
-             return [{"sku": "ERR-2", "name": f"ZENDROP BLOCKED: {error_msg}", "price": 0.0, "stock_count": 0, "hero_image": f"https://via.placeholder.com/800?text=ERROR+{response.status_code}", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+             return [{"sku": "ERR-2", "name": f"ZENDROP BLOCKED ({response.status_code}): {error_msg}", "price": 0.0, "stock_count": 0, "hero_image": f"https://via.placeholder.com/800?text=ERROR+{response.status_code}", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
 
-        live_items = response.json().get('data', [])
+        # If JSON parsing fails, this will catch the HTML wall and display it
+        try:
+            data = response.json()
+        except Exception:
+            raw_text = response.text[:150].replace('"', "'")
+            return [{"sku": "ERR-5", "name": f"ZENDROP SENT NON-JSON DATA: {raw_text}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=NON+JSON+RESPONSE", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+
+        live_items = data.get('data', [])
         
         if not live_items:
-             return [{"sku": "ERR-3", "name": "ZENDROP CATALOG RETURNED 0 ITEMS", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=EMPTY+CATALOG", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+             return [{"sku": "ERR-3", "name": "ZENDROP CATALOG EMPTY", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=EMPTY+CATALOG", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
 
         inventory = []
         for raw_item in live_items:
@@ -127,4 +133,4 @@ async def get_matrix():
         return inventory
         
     except Exception as e:
-        return [{"sku": "ERR-4", "name": f"SERVER CRASH: {str(e)[:50]}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=SERVER+ERROR", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
+        return [{"sku": "ERR-4", "name": f"SERVER CRASH: {str(e)[:100]}", "price": 0.0, "stock_count": 0, "hero_image": "https://via.placeholder.com/800?text=SERVER+ERROR", "images": [], "shippingText": "ERROR", "storefront": "Tech & Mobile Gear", "specs": {}}]
