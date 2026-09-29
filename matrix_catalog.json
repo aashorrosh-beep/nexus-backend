@@ -1,277 +1,70 @@
 [
   {
-    "sku": "NX-VLT-001",
-    "name": "Verified: Pokemon 30th Celebration Ultra-Premium Collection",
-    "price": 549.95,
-    "stock_count": 12,
-    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $8.25 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "The Pokemon Company", "condition": "Factory Sealed", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-002",
-    "name": "Verified: 2026 Bowman Chrome Baseball Jumbo Box",
-    "price": 895.00,
-    "stock_count": 8,
-    "hero_image": "https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $13.40 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Topps/Bowman", "condition": "Factory Sealed", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-003",
-    "name": "Verified: 2026 Panini Prizm WNBA Hobby Box",
-    "price": 450.00,
-    "stock_count": 15,
-    "hero_image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $6.75 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Panini America", "condition": "Factory Sealed", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-004",
-    "name": "Verified: 2026 Topps Definitive Football Case",
-    "price": 3200.00,
-    "stock_count": 3,
-    "hero_image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $48.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Topps", "condition": "Factory Sealed Case", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-005",
-    "name": "Verified: MTG Reality Fracture Collector Booster Box",
-    "price": 385.00,
-    "stock_count": 20,
-    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $5.75 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Wizards of the Coast", "condition": "Factory Sealed", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-006",
-    "name": "Verified: One Piece OP-18 Sealed Case",
-    "price": 1450.00,
-    "stock_count": 5,
-    "hero_image": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $21.75 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Bandai", "condition": "Factory Sealed Case", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-007",
-    "name": "Verified: Delta Reign Booster Box First Edition",
-    "price": 275.00,
-    "stock_count": 30,
-    "hero_image": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Secure Dispatch",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Delta Syndicate", "condition": "Factory Sealed", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-008",
-    "name": "Verified: One Piece EB-05 Booster Case",
-    "price": 1100.00,
-    "stock_count": 6,
-    "hero_image": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $16.50 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Bandai", "condition": "Factory Sealed Case", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-009",
-    "name": "Verified: 2026 Topps Allen & Ginter Hobby Case",
+    "sku": "NX-AUTO-001",
+    "name": "Demon 170 Carbon Fiber Intake System",
     "price": 1850.00,
     "stock_count": 4,
-    "hero_image": "https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $27.75 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Topps", "condition": "Factory Sealed Case", "audited": "Dual-Brain Verified" }
+    "hero_image": "https://images.unsplash.com/photo-1627067822989-138476831d68?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1627067822989-138476831d68?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1610486822292-9a3d4eeab871?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80"
+    ],
+    "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "shippingText": "Secure Freight (3-5 Day Dispatch)",
+    "storefront": "HIGH-PERFORMANCE AUTO",
+    "specs": {
+      "Brand/Maker": "Nexus Auto Dynamics",
+      "Condition": "Brand New",
+      "Material": "Aerospace Grade Carbon Fiber",
+      "Fitment": "Demon 170 / Redeye",
+      "Authentication": "Dual-Brain Verified"
+    }
   },
   {
-    "sku": "NX-VLT-010",
-    "name": "Verified: 2025-26 Panini Select Basketball Case",
-    "price": 4500.00,
-    "stock_count": 2,
-    "hero_image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $67.50 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Panini America", "condition": "Factory Sealed Case", "audited": "Dual-Brain Verified" }
+    "sku": "NX-GLF-001",
+    "name": "Tour-Spec Performance Polo & Custom Kit",
+    "price": 145.00,
+    "stock_count": 50,
+    "hero_image": "https://images.unsplash.com/photo-1592916892552-3d85bc751d3f?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1592916892552-3d85bc751d3f?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1535136104956-62ce9b5c3eb8?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1582236113264-e435985ce485?auto=format&fit=crop&w=800&q=80"
+    ],
+    "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "shippingText": "FREE Secure Dispatch",
+    "storefront": "GOLF & ATHLETIC APPAREL",
+    "specs": {
+      "Brand/Maker": "Athletic 360",
+      "Material": "Moisture-Wicking Nano-Blend",
+      "Fit": "Athletic / Tour Cut",
+      "UV Protection": "UPF 50+",
+      "Authentication": "Dual-Brain Verified"
+    }
   },
   {
-    "sku": "NX-VLT-011",
-    "name": "Verified: 2026 Topps Neon Marvel Blaster Case",
-    "price": 850.00,
-    "stock_count": 10,
-    "hero_image": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (+ $12.75 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Topps/Marvel", "condition": "Factory Sealed Case", "audited": "Dual-Brain Verified" }
+    "sku": "NX-RENO-001",
+    "name": "Industrial Cable Railing System Kit",
+    "price": 425.00,
+    "stock_count": 12,
+    "hero_image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1600607687920-4e2a09c15468?auto=format&fit=crop&w=800&q=80"
+    ],
+    "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "shippingText": "LTL Freight (5-7 Day Delivery)",
+    "storefront": "HOME RENOVATION & FIXTURES",
+    "specs": {
+      "Brand/Maker": "Nexus Infrastructure",
+      "Material": "T316 Marine Grade Stainless",
+      "Application": "Stairwell / Decking",
+      "Tensioners": "Included",
+      "Authentication": "Dual-Brain Verified"
+    }
   },
-  {
-    "sku": "NX-VLT-012",
-    "name": "Verified: Shohei Ohtani 2018 Bowman Chrome Rookie Auto (PSA 10)",
-    "price": 12500.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $187.50 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Topps/Bowman", "condition": "PSA 10 Gem Mint", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-013",
-    "name": "Verified: Victor Wembanyama 2023 Prizm Black 1-of-1 (BGS 9.5)",
-    "price": 45000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $675.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Panini America", "condition": "BGS 9.5 Gem Mint", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-014",
-    "name": "Verified: 1999 Base Set Charizard 1st Edition Shadowless (PSA 9)",
-    "price": 28000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $420.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Wizards of the Coast", "condition": "PSA 9 Mint", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-015",
-    "name": "Verified: Michael Jordan 1986 Fleer Rookie #57 (PSA 8)",
-    "price": 18500.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $277.50 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Fleer", "condition": "PSA 8 NM-MT", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-016",
-    "name": "Verified: LeBron James 2003 Exquisite Collection Rookie Auto (BGS 9)",
-    "price": 65000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $975.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Upper Deck", "condition": "BGS 9 Mint", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-017",
-    "name": "Verified: Wayne Gretzky 1979 O-Pee-Chee Rookie #18 (PSA 8)",
-    "price": 14000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1580748141549-71748dbe0bdc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $210.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "O-Pee-Chee", "condition": "PSA 8 NM-MT", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-018",
-    "name": "Verified: Lionel Messi 2014 Prizm World Cup Gold /10 (PSA 10)",
-    "price": 22000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $330.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Panini America", "condition": "PSA 10 Gem Mint", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-019",
-    "name": "Verified: Mickey Mantle 1952 Topps #311 (PSA 4)",
-    "price": 42000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $630.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Topps", "condition": "PSA 4 VG-EX", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-VLT-020",
-    "name": "Verified: Luka Doncic 2018 National Treasures RPA /99 (BGS 9.5)",
-    "price": 55000.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $825.00 Insurance)",
-    "storefront": "TRADING CARDS VAULT",
-    "specs": { "manufacturer": "Panini America", "condition": "BGS 9.5 Gem Mint", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-CSG-021",
-    "name": "Verified Consignment: Tom Brady 1-of-1 Autograph",
-    "price": 38500.00,
-    "stock_count": 1,
-    "hero_image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "Secure Armored Dispatch (+ $577.50 Insurance)",
-    "storefront": "ROOM 21: PRE-RELEASE ACQUISITIONS",
-    "specs": { "manufacturer": "Private Collection", "condition": "Pristine / 1-of-1", "audited": "Owner Verified" }
-  },
-  {
-    "sku": "NX-PLS-022",
-    "name": "Verified: 16-Inch Ultra-Rare Squishmallow (Vault Exclusive)",
-    "price": 55.00,
-    "stock_count": 250,
-    "hero_image": "https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Secure Dispatch (3-5 Day Delivery)",
-    "storefront": "ROOM 22: SQUISHMALLOWS & BLIND BOXES",
-    "specs": { "manufacturer": "Kellytoy", "condition": "New with Tags", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-WAX-023",
-    "name": "Verified: 2026 Topps Series 2 Baseball Jumbo Box",
-    "price": 285.00,
-    "stock_count": 45,
-    "hero_image": "https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1563299796-17596ed6b017?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Vault Delivery (3-5 Day Dispatch)",
-    "storefront": "ROOM 23: LIVE SPORTS WAX & RIPS",
-    "specs": { "manufacturer": "Topps", "condition": "Factory Sealed", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-TCG-024",
-    "name": "Ascended Heroes Booster Bundle & Armored Display Kit",
-    "price": 89.95,
-    "stock_count": 120,
-    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Secure Dispatch (4-Day Delivery)",
-    "storefront": "ROOM 24: TCG SYNDICATE & HOBBY ARMORY",
-    "specs": { "manufacturer": "The Pokemon Company / Nexus", "condition": "Brand New", "audited": "Dual-Brain Verified" }
-  },
-  {
-    "sku": "NX-ODD-025",
-    "name": "Verified Trending: Magnetic Levitation Sneaker/Card Display",
-    "price": 129.99,
-    "stock_count": 85,
-    "hero_image": "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
-    "images": ["https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80"],
-    "shippingText": "FREE Express Freight (5-7 Day Delivery)",
-    "storefront": "ROOM 25: VIRAL ODDITIES VAULT",
-    "specs": { "manufacturer": "Nexus Tech", "condition": "Brand New", "audited": "Scout Agent Verified" }
-  }
-]
