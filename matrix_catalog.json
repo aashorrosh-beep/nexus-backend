@@ -1,42 +1,17 @@
 [
   {
     "sku": "NX-CV-001",
-    "name": "1999 Pokémon 1st Edition Shadowless Charizard Holo (Vault Consignment)",
+    "name": "1999 Pokémon 1st Edition Charizard",
     "storefront": "Room 21: The Consignment Vault",
     "price": 8499.00,
     "stock_count": 2,
-    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=1000&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=600&q=80"
-    ],
-    "video_url": "",
-    "marketing_copy": "Secured directly in third-party insured vault storage. Escrow custody release upon cryptographic verification.",
-    "specs": {
-      "manufacturer": "Wizards of the Coast / PSA Graded",
-      "shipping_weight": "1.4 lbs",
-      "dimensions": "5.4 x 3.2 x 0.3 in (Slab)",
-      "material_grade": "PSA Mint 9 Authentication",
-      "warranty_status": "NEXUS Escrow Verification Guarantee"
-    }
+    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=1000&q=80"
   },
   {
-    "sku": "NX-BT-002",
-    "name": "Clinical LED Dual-Wave Facial Therapy Shield",
-    "storefront": "Room 22: Advanced Beauty & Skincare",
-    "price": 289.00,
-    "stock_count": 6,
-    "hero_image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80",
-    "images": [
-      "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
-    ],
-    "video_url": "",
-    "marketing_copy": "Hospital-grade red and near-infrared light spectrum calibrated for cellular collagen regeneration.",
-    "specs": {
-      "manufacturer": "NEXUS Bio-Photonics",
-      "shipping_weight": "2.8 lbs",
-      "dimensions": "12.0 x 8.5 x 5.0 in",
-      "material_grade": "Medical-Grade Flexible Silicone",
-      "warranty_status": "2-Year Manufacturer Replacement"
-    }
+    "sku": "NX-MENS-020",
+    "name": "Premium Men's Grooming Kit",
+    "price": 17.16,
+    "stock_count": 45,
+    "storefront": "Beauty & Personal Care"
   }
 ]
