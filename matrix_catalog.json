@@ -1,17 +1,47 @@
 [
   {
-    "sku": "NX-CV-001",
-    "name": "1999 Pokémon 1st Edition Charizard",
-    "storefront": "Room 21: The Consignment Vault",
-    "price": 8499.00,
-    "stock_count": 2,
-    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=1000&q=80"
+    "sku": "NX-TCG-001",
+    "name": "Pokémon TCG: Obsidian Flames Elite Trainer Box (Sealed)",
+    "storefront": "Trending Oddities & Blind Boxes",
+    "price": 49.99,
+    "stock_count": 24,
+    "hero_image": "https://images.unsplash.com/photo-1613771404784-3a5686aa2be3?auto=format&fit=crop&w=1000&q=80",
+    "marketing_copy": "Factory sealed. Guaranteed unsearched retail commodity."
   },
   {
-    "sku": "NX-MENS-020",
-    "name": "Premium Men's Grooming Kit",
-    "price": 17.16,
-    "stock_count": 45,
-    "storefront": "Beauty & Personal Care"
+    "sku": "NX-TECH-002",
+    "name": "YubiKey 5C NFC Hardware Security Key",
+    "storefront": "Tech & Mobile Gear",
+    "price": 55.00,
+    "stock_count": 85,
+    "hero_image": "https://images.unsplash.com/photo-1563207153-f403bf289096?auto=format&fit=crop&w=1000&q=80",
+    "marketing_copy": "Military-grade cryptographic hardware verification. Secure your digital assets."
+  },
+  {
+    "sku": "NX-GOLF-003",
+    "name": "NEXUS Performance Golf Polo - Midnight Black",
+    "storefront": "Golf & Athletic Apparel",
+    "price": 65.00,
+    "stock_count": 110,
+    "hero_image": "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=1000&q=80",
+    "marketing_copy": "Moisture-wicking athletic fit. Engineered for the back nine."
+  },
+  {
+    "sku": "NX-GROOM-004",
+    "name": "Premium Men's Grooming Kit & Humidor Bundle",
+    "storefront": "Men's Grooming",
+    "price": 120.00,
+    "stock_count": 15,
+    "hero_image": "https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&w=1000&q=80",
+    "marketing_copy": "Executive grooming essentials paired with a travel cigar humidor."
+  },
+  {
+    "sku": "NX-AUTO-005",
+    "name": "Demon 170 / Nismo Z Micro-Fiber Detailing Set",
+    "storefront": "High-Performance Auto",
+    "price": 35.50,
+    "stock_count": 200,
+    "hero_image": "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=1000&q=80",
+    "marketing_copy": "Ultra-soft premium detailing towels for high-performance paint correction."
   }
 ]
